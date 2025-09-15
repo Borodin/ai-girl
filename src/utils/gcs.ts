@@ -1,5 +1,6 @@
 import {Storage} from '@google-cloud/storage';
 import {v4 as uuidv4} from 'uuid';
+import * as fs from 'fs';
 
 export class GCSClient {
   private storage: Storage;
@@ -10,7 +11,16 @@ export class GCSClient {
       projectId: process.env.GCP_PROJECT_ID || '',
     };
 
-    if (process.env.GCP_KEY_FILE) {
+    // Check for base64 encoded credentials first (for production)
+    if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64) {
+      const credentialsPath = '/tmp/gcp-credentials.json';
+      const credentialsJson = Buffer.from(
+        process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64,
+        'base64'
+      ).toString();
+      fs.writeFileSync(credentialsPath, credentialsJson);
+      config.keyFilename = credentialsPath;
+    } else if (process.env.GCP_KEY_FILE) {
       config.keyFilename = process.env.GCP_KEY_FILE;
     }
 
