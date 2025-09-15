@@ -1,0 +1,26 @@
+{
+  "version": "0.2",
+  "language": "en,ru",
+  "words": [
+    "deepseek",
+    "anfisa",
+    "COMFYUI",
+    "comfyui",
+    "uuidv",
+    "safetensors",
+    "appspot",
+    "evaluxury",
+    "annbucks",
+    "evillane"
+  ],
+  "ignorePaths": [
+    "node_modules",
+    "dist",
+    ".git",
+    "*.log",
+    "package-lock.json"
+  ],
+  "ignoreRegExpList": [
+    "[\\u0400-\\u04FF]+"
+  ]
+}

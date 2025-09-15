@@ -1,0 +1,11 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:alpine3.17
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ai_girlfriend
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres

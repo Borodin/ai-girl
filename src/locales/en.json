@@ -1,0 +1,42 @@
+{
+  "bot": {
+    "name": "AI Girl",
+    "description": "AI girlfriend bot",
+    "short_description": "Chat with AI girls"
+  },
+  "commands": {
+    "start": "Start bot",
+    "help": "Get help",
+    "language": "Change language",
+    "characters": "Select character",
+    "stats": "Show statistics"
+  },
+  "messages": {
+    "select_language": "<b>Language Selection</b>\nBefore chatting with the girls, please select your preferred language:",
+    "character_selection": "<b>{{name}}</b>\n{{description}}\nUse navigation buttons to browse characters:",
+    "welcome_back": "👋 <b>Welcome back!</b>\nYou're already chatting with <b>{{characterName}}</b>. What would you like to do?",
+    "stats": "<b>Statistics</b>\n\n<b>Character:</b> {{characterName}}\n<b>Sympathy level:</b> {{sympathyLevel}}% {{sympathyEmoji}}\n<b>Balance:</b> {{spiceBalance}} 🌶",
+    "insufficient_spice": "🌶 <b>Insufficient spice!</b>\nYou need to top up your balance to continue chatting.\n\n<b>Pricing:</b>\nMessage: {{textCost}} 🌶\nPhoto: {{imageCost}} 🌶\nVideo: {{videoCost}} 🌶\n\n<b>Current balance:</b> {{balance}} 🌶",
+    "top_up_spice": "🌶 <b>Top up balance</b>\n\n<b>Pricing:</b>\nMessage: {{textCost}} 🌶\nPhoto: {{imageCost}} 🌶\nVideo: {{videoCost}} 🌶\n\n<b>Current balance:</b> {{balance}} 🌶\n\nSelect a package to top up:",
+    "payment_successful": "<b>Balance topped up!</b>\nAdded: {{spiceAmount}} 🌶\nCurrent balance: {{balance}} 🌶",
+    "inviter_reward": "<b>Friend accepted invitation!</b>\nYou received {{amount}} 🌶 for inviting {{inviteeName}}\nCurrent balance: {{balance}} 🌶",
+    "invitee_reward": "<b>Welcome!</b>\nYou received {{amount}} 🌶 for registering via {{inviterName}}'s invitation\nCurrent balance: {{balance}} 🌶"
+  },
+  "status": {
+    "language_set": "Language selected",
+    "character_selected": "Character {{name}} selected!",
+    "continue_chatting_confirmed": "Great! Continue your conversation.",
+    "history_cleared": "All chat history has been cleared. Starting fresh!"
+  },
+  "buttons": {
+    "select_character": "Select {{name}}",
+    "continue_chatting": "💬 Continue chatting",
+    "choose_another_character": "💁🏼‍♀️ Choose another character",
+    "clear_history_restart": "🗑️ Clear all history and start over",
+    "top_up_balance": "Top up balance",
+    "invite_friend": "Invite friend (+{{bonus}} 🌶)"
+  },
+  "payment": {
+    "invoice_description": "Balance top up: {{spiceAmount}} 🌶 for {{starsCost}} ⭐"
+  }
+}
