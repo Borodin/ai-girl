@@ -4,19 +4,22 @@ import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
-export const sequelize = new Sequelize({
+export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   dialect: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'ai_girlfriend',
-  username: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || '',
   models: [User, Character, Message, SpiceTransaction],
-  logging: process.env.NODE_ENV === 'development' ? false : false,
+  logging: false,
   define: {
     underscored: false,
     freezeTableName: true,
   },
+  dialectOptions: process.env.DATABASE_URL?.includes('sslmode=require')
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      }
+    : undefined,
 });
 
 export {User, Character, Message, SpiceTransaction};

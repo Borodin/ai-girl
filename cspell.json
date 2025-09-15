@@ -11,7 +11,8 @@
     "appspot",
     "evaluxury",
     "annbucks",
-    "evillane"
+    "evillane",
+    "sslmode"
   ],
   "ignorePaths": [
     "node_modules",

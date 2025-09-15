@@ -11,7 +11,6 @@ export class GCSClient {
       projectId: process.env.GCP_PROJECT_ID || '',
     };
 
-    // Check for base64 encoded credentials first (for production)
     if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64) {
       const credentialsPath = '/tmp/gcp-credentials.json';
       const credentialsJson = Buffer.from(
@@ -20,8 +19,6 @@ export class GCSClient {
       ).toString();
       fs.writeFileSync(credentialsPath, credentialsJson);
       config.keyFilename = credentialsPath;
-    } else if (process.env.GCP_KEY_FILE) {
-      config.keyFilename = process.env.GCP_KEY_FILE;
     }
 
     this.storage = new Storage(config);

@@ -12,18 +12,18 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: ai_girlfriend_bot
-    env_file:
-      - .env
-    environment:
-      DB_HOST: postgres
-      NODE_ENV: production
-    depends_on:
-      - postgres
-    restart: unless-stopped
-    volumes:
-      - ./src/assets:/app/src/assets:ro
+#  bot:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: ai_girlfriend_bot
+#    env_file:
+#      - .env
+#    environment:
+#      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ai_girlfriend
+#      NODE_ENV: development
+#    depends_on:
+#      - postgres
+#    restart: unless-stopped
+#    volumes:
+#      - ./src/assets:/app/src/assets:ro
