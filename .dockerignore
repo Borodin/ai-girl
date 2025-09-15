@@ -49,6 +49,3 @@ docker-compose*.yml
 # Logs
 logs
 *.log
-
-# Google Cloud credentials
-src/assets/trendy-430522-d97e32e02ed9.json
