@@ -12,14 +12,15 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     underscored: false,
     freezeTableName: true,
   },
-  dialectOptions: process.env.DATABASE_URL?.includes('sslmode=require')
-    ? {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
-      }
-    : undefined,
+  dialectOptions: {
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? {
+            require: true,
+            rejectUnauthorized: false,
+          }
+        : false,
+  },
 });
 
 export {User, Character, Message, SpiceTransaction};
