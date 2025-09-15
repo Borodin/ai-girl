@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 });
 
 (async () => {
+  console.log('Starting...');
   console.log('Syncing database...');
   await sequelize.sync({force: true, alter: true});
 
