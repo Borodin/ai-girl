@@ -473,7 +473,7 @@ export class User extends Model {
     await this.sendMessage(
       this.translate('messages.inviter_reward', {
         amount: inviterAmount,
-        inviteeName: invitee.fullName,
+        inviteeName: invitee.htmlDeepLink,
         balance: await this.getSpiceBalance(),
       }),
       {parse_mode: 'HTML'}
@@ -483,7 +483,7 @@ export class User extends Model {
     await invitee.sendMessage(
       invitee.translate('messages.invitee_reward', {
         amount: inviteeAmount,
-        inviterName: this.fullName,
+        inviterName: this.htmlDeepLink,
         balance: await invitee.getSpiceBalance(),
       }),
       {parse_mode: 'HTML'}
