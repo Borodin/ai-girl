@@ -49,6 +49,11 @@ export class PersistentMessagingService {
       FROM users u
       WHERE u.selected_character_id IS NOT NULL
         AND u.allows_write_to_pm = true
+        AND (
+              -- Проверяем баланс Spice пользователя > 30
+              SELECT COALESCE(SUM(amount), 0)
+              FROM spice_transactions st
+              WHERE st.user_id = u.id) > 30
         AND EXISTS (
         -- Есть сообщения и последнее старше порога
         SELECT 1
