@@ -1,21 +1,21 @@
 import {Sequelize} from 'sequelize-typescript';
-import pg from 'pg';
 import {User} from './User.js';
 import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
-const isDigitalOceanDB = process.env.DATABASE_URL!.includes('ondigitalocean.com');
-console.log('PG');
-// Настройка CA сертификата
-const ca =
-  isDigitalOceanDB && process.env.DATABASE_CA_CERT
-    ? Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8')
-    : undefined;
+console.log('dbUrl');
+// Парсим DATABASE_URL
+const dbUrl = new URL(process.env.DATABASE_URL!);
+const isDigitalOceanDB = dbUrl.hostname.includes('ondigitalocean.com');
 
-interface SequelizeConfig {
+interface DatabaseConfig {
   dialect: 'postgres';
-  dialectModule: typeof pg;
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  database: string;
   models: (typeof User | typeof Character | typeof Message | typeof SpiceTransaction)[];
   logging: boolean;
   define: {
@@ -23,17 +23,30 @@ interface SequelizeConfig {
     freezeTableName: boolean;
   };
   dialectOptions?: {
-    ssl: {
-      require: boolean;
-      rejectUnauthorized: boolean;
-      ca?: string;
-    };
+    ssl:
+      | {
+          require: boolean;
+          rejectUnauthorized: boolean;
+          ca: string;
+        }
+      | boolean;
+  };
+  pool?: {
+    max: number;
+    min: number;
+    acquire: number;
+    idle: number;
   };
 }
 
-const sequelizeConfig: SequelizeConfig = {
+// Извлекаем параметры подключения
+const dbConfig: DatabaseConfig = {
   dialect: 'postgres',
-  dialectModule: pg, // Явно указываем использование pg
+  host: dbUrl.hostname,
+  port: parseInt(dbUrl.port),
+  username: dbUrl.username,
+  password: dbUrl.password,
+  database: dbUrl.pathname.slice(1), // Убираем начальный слеш
   models: [User, Character, Message, SpiceTransaction],
   logging: false,
   define: {
@@ -43,18 +56,26 @@ const sequelizeConfig: SequelizeConfig = {
 };
 
 if (isDigitalOceanDB) {
-  sequelizeConfig.dialectOptions = {
-    ssl: ca
+  // Для DigitalOcean используем специальную конфигурацию SSL
+  dbConfig.dialectOptions = {
+    ssl: process.env.DATABASE_CA_CERT
       ? {
           require: true,
-          rejectUnauthorized: true,
-          ca: ca,
+          rejectUnauthorized: false, // Критично для DigitalOcean
+          ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
         }
-      : {
-          require: true,
-          rejectUnauthorized: false,
-        },
+      : true, // Просто включаем SSL без проверки сертификата
+  };
+
+  // Добавляем pool настройки для стабильности
+  dbConfig.pool = {
+    max: 5,
+    min: 0,
+    acquire: 60000,
+    idle: 10000,
   };
 }
 
-export const sequelize = new Sequelize(process.env.DATABASE_URL!, sequelizeConfig);
+export const sequelize = new Sequelize(dbConfig);
+
+export {User, Character, Message, SpiceTransaction};
