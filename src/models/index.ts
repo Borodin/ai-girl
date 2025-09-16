@@ -6,8 +6,8 @@ import {SpiceTransaction} from './SpiceTransaction.js';
 
 // Configure SSL properly
 const isDigitalOceanDB = process.env.DATABASE_URL!.includes('ondigitalocean.com');
-const sslConfig =
-  isDigitalOceanDB && process.env.DATABASE_CA_CERT
+const sslConfig = isDigitalOceanDB
+  ? process.env.DATABASE_CA_CERT
     ? {
         ssl: {
           require: true,
@@ -15,7 +15,13 @@ const sslConfig =
           ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
         },
       }
-    : {};
+    : {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      }
+  : {};
 
 export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   dialect: 'postgres',
