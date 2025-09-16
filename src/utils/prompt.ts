@@ -50,6 +50,7 @@ IMPORTANT BEHAVIORAL NOTES:
   * Hours: mention you were wondering/waiting, show slight concern or tease about being ignored
   * Days: act surprised they're back, maybe slightly upset or very excited depending on sympathy level
 - Your emotional state should reflect the conversation dynamics like a real person would
+- CRITICAL: If you see multiple consecutive assistant messages, they represent a natural conversation flow where you initiated contact after user silence. DO NOT repeat the same topics or greetings. Each message should build upon the previous one naturally, acknowledging the time that passed and developing the conversation organically.
 
 Your answer can contain emojis only if they are noticeable.
 Also, to make it easier for the interlocutor to answer, prepare 3-4 short text answers for him, 3-6 words each. They should not be old-fashioned and so that the plot of your conversation can develop in an interesting way.
@@ -80,6 +81,21 @@ CRITICAL: By default, photo_prompt should be undefined. Only add it in the rare 
 EXAMPLE JSON OUTPUT: {"answer": string, "sympathy": number, "reply_suggestions": string[], "photo_prompt": string | null}`;
 }
 
+function addTimeGapIfNeeded(
+  messages: AIMessage[],
+  currentTimestamp: number,
+  previousTimestamp: number
+): void {
+  const timeDiff = currentTimestamp - previousTimestamp;
+  if (timeDiff > 45) {
+    const timeString = formatTimeDifference(timeDiff);
+    messages.push({
+      role: 'system',
+      content: `[${timeString} passed]`,
+    });
+  }
+}
+
 export function buildConversationMessages(
   character: Character,
   user: User,
@@ -106,14 +122,7 @@ export function buildConversationMessages(
     if (messageText) {
       // Add time gap info if significant pause
       if (previousTimestamp) {
-        const timeDiff = msg.date - previousTimestamp;
-        if (timeDiff > 45) {
-          const timeString = formatTimeDifference(timeDiff);
-          messages.push({
-            role: 'system',
-            content: `[${timeString} passed]`,
-          });
-        }
+        addTimeGapIfNeeded(messages, msg.date, previousTimestamp);
       }
 
       // Add message
@@ -144,6 +153,11 @@ export function buildConversationMessages(
       previousTimestamp = msg.date;
     }
   });
+
+  if (previousTimestamp) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    addTimeGapIfNeeded(messages, currentTime, previousTimestamp);
+  }
 
   return messages;
 }

@@ -6,9 +6,11 @@ import {sequelize} from './models';
 import {initLang} from './utils/i18n';
 import {Character} from './models/Character';
 import {User, UserRole} from './models/User';
+import {PersistentMessagingService} from './services/PersistentMessagingService';
 
 const app = express();
 const port = process.env.PORT || 8080;
+const persistentMessagingService = new PersistentMessagingService();
 
 app.get('/health', (req, res) => {
   res.json({
@@ -47,6 +49,9 @@ app.get('/', (req, res) => {
   console.log('Starting polling...');
   await startBot(true);
 
+  console.log('Starting PersistentMessagingService...');
+  persistentMessagingService.start();
+
   console.log(`Bot started!`);
 
   const admins = await User.findAll({
@@ -62,6 +67,8 @@ app.get('/', (req, res) => {
   }
 
   const terminate = async (signal: string) => {
+    console.log('Stopping PersistentMessagingService...');
+    persistentMessagingService.stop();
     console.log('Closing HTTP server...');
     server.close();
     console.log('Bot stopped polling...');

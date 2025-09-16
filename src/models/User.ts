@@ -437,7 +437,6 @@ export class User extends Model {
     );
   }
 
-  // Методы для работы с валютой Spice 🌶
   async chargeSpice(amount: number, transactionType: TransactionType): Promise<boolean> {
     try {
       await SpiceTransaction.createTransaction(this.id, -amount, transactionType);
