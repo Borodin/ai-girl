@@ -175,15 +175,18 @@ bot.on('callback_query', async (query) => {
     }
     await user.sendCharacterSelection();
   } else if (query.data === 'welcome_clear_all') {
+    // Удаляем все сообщения с текущей девушкой
+    await Message.destroy({
+      where: {
+        chat_id: user.id,
+        character_id: user.selected_character_id,
+      },
+    });
+
     await bot.answerCallbackQuery({
       callback_query_id: query.id,
       text: user.translate('status.history_cleared'),
     });
-
-    // todo: Удаляем все сообщения пользователя
-    // await Message.destroy({
-    //   where: {chat_id: user.id},
-    // });
 
     if (query.message) {
       await Message.deleteByTgMsg(query.message);
