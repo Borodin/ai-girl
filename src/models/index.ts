@@ -4,6 +4,14 @@ import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
+console.log({
+  ssl: {
+    require: true,
+    rejectUnauthorized: true,
+    ca: process.env.DATABASE_CA_CERT,
+  },
+});
+
 export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   dialect: 'postgres',
   models: [User, Character, Message, SpiceTransaction],
