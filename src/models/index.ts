@@ -4,6 +4,7 @@ import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
+console.log('DATABASE_URL', process.env.DATABASE_URL!);
 const dbUrl = new URL(process.env.DATABASE_URL!);
 const dbConfig = {
   dialect: 'postgres' as const,
