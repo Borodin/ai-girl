@@ -4,7 +4,13 @@ import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
-export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
+// Add SSL parameters to DATABASE_URL if not present
+const databaseUrl = process.env.DATABASE_URL!;
+const urlWithSSL = databaseUrl.includes('sslmode=')
+  ? databaseUrl
+  : `${databaseUrl}?sslmode=require`;
+
+export const sequelize = new Sequelize(urlWithSSL, {
   dialect: 'postgres',
   models: [User, Character, Message, SpiceTransaction],
   logging: false,
@@ -14,7 +20,6 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   },
   dialectOptions: {
     ssl: {
-      require: true,
       rejectUnauthorized: false,
     },
   },
