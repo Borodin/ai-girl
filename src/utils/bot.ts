@@ -18,6 +18,8 @@ export const bot = new TelegramBot({
 export let me: TGTypes.User | null = null;
 
 export async function setNameAndDescription(): Promise<void> {
+  const isProduction = process.env.NODE_ENV === 'production';
+
   try {
     for (const lang of Object.keys(i18n.store.data)) {
       await bot.setMyCommands({
@@ -30,18 +32,21 @@ export async function setNameAndDescription(): Promise<void> {
         ],
         language_code: lang,
       });
-      await bot.setMyName({
-        name: i18n.t('bot.name', lang),
-        language_code: lang,
-      });
-      await bot.setMyDescription({
-        description: i18n.t('bot.description', lang),
-        language_code: lang,
-      });
-      await bot.setMyShortDescription({
-        short_description: i18n.t('bot.short_description', lang),
-        language_code: lang,
-      });
+
+      if (isProduction) {
+        await bot.setMyName({
+          name: i18n.t('bot.name', lang),
+          language_code: lang,
+        });
+        await bot.setMyDescription({
+          description: i18n.t('bot.description', lang),
+          language_code: lang,
+        });
+        await bot.setMyShortDescription({
+          short_description: i18n.t('bot.short_description', lang),
+          language_code: lang,
+        });
+      }
     }
   } catch (e) {
     if (TelegramBot.isTelegramError(e) && e.response.error_code === 429) {
