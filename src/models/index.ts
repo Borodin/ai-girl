@@ -3,10 +3,8 @@ import {User} from './User.js';
 import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
-console.log('FIX #1');
-// Парсим DATABASE_URL
-const dbUrl = new URL(process.env.DATABASE_URL!);
 
+const dbUrl = new URL(process.env.DATABASE_URL!);
 const dbConfig = {
   dialect: 'postgres' as const,
   host: dbUrl.hostname,
@@ -27,7 +25,7 @@ const dbConfig = {
           rejectUnauthorized: false,
           ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
         }
-      : true,
+      : undefined,
   },
 };
 
