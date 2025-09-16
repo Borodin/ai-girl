@@ -177,13 +177,16 @@ bot.on('callback_query', async (query) => {
     }
     await user.sendCharacterSelection();
   } else if (query.data === 'welcome_clear_all') {
-    // Удаляем все сообщения с текущей девушкой
-    await Message.destroy({
+    const messages = await Message.findAll({
       where: {
         chat_id: user.id,
         character_id: user.selected_character_id,
       },
     });
+
+    for (const message of messages) {
+      await message.destroy();
+    }
 
     await bot.answerCallbackQuery({
       callback_query_id: query.id,
