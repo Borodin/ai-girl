@@ -80,7 +80,7 @@ export class Character extends Model {
     });
 
     await Character.findOrCreate({
-      where: {slug: 'evaluxury'},
+      where: {slug: 'eva'},
       defaults: {
         slug: 'eva',
         name: {
