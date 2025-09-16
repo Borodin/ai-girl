@@ -1,4 +1,10 @@
 import 'dotenv/config';
+
+// Disable SSL certificate verification globally
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+console.log('NODE_TLS_REJECT_UNAUTHORIZED', process.env.NODE_TLS_REJECT_UNAUTHORIZED);
+
 import express from 'express';
 import {bot, setNameAndDescription, startBot} from './utils/bot';
 import {sequelize} from './models';
