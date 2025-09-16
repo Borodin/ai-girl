@@ -5,6 +5,7 @@ import {bot, setNameAndDescription, startBot} from './utils/bot';
 import {sequelize} from './models';
 import {initLang} from './utils/i18n';
 import {Character} from './models/Character';
+import {User, UserRole} from './models/User';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -47,6 +48,18 @@ app.get('/', (req, res) => {
   await startBot(true);
 
   console.log(`Bot started!`);
+
+  const admins = await User.findAll({
+    where: {role: UserRole.admin},
+  });
+
+  for (const admin of admins) {
+    try {
+      await admin.sendMessage('🔄 Bot restarted');
+    } catch (error) {
+      console.error(`Failed to notify admin ${admin.id}:`, error);
+    }
+  }
 
   const terminate = async (signal: string) => {
     console.log('Closing HTTP server...');
