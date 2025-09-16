@@ -1,12 +1,16 @@
-name: Build and Publish Docker Image
+name: Build and Deploy
 
 on:
   push:
-    branches: [ main, master ]
-    tags: [ 'v*' ]
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  DO_APP_ID: 5fdf484c-3859-4387-bc2e-533ae5059772
 
 jobs:
-  build-and-push:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,32 +19,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
+      - name: Log in to Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push image
         run: |
-          IMAGE_NAME=ghcr.io/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-          docker build -t $IMAGE_NAME:latest .
-          docker push $IMAGE_NAME:latest
+          IMAGE_TAG=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker build -t ${IMAGE_TAG,,} .
+          docker push ${IMAGE_TAG,,}
 
-      - name: Trigger DigitalOcean deployment
-        if: success()
+      - name: Deploy to DigitalOcean
+        env:
+          DO_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
         run: |
-          response=$(curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" \
+          curl -X POST \
+            -H "Authorization: Bearer $DO_TOKEN" \
             -H "Content-Type: application/json" \
             -d '{}' \
-            -w "%{http_code}" \
-            -s \
-            "https://api.digitalocean.com/v2/apps/5fdf484c-3859-4387-bc2e-533ae5059772/deployments")
-
-          if [[ $response != *"200"* && $response != *"201"* ]]; then
-            echo "Deployment trigger failed with response: $response"
-            exit 1
-          fi
+            --fail-with-body \
+            "https://api.digitalocean.com/v2/apps/${{ env.DO_APP_ID }}/deployments"
 
