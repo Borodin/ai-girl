@@ -23,7 +23,11 @@ app.get('/', (req, res) => {
 
 (async () => {
   console.log('Syncing database...');
-  await sequelize.sync({force: true, alter: true});
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  await sequelize.sync({
+    force: isDevelopment,
+    alter: true,
+  });
 
   console.log('Initializing characters...');
   await Character.initializeDefaultCharacters();
