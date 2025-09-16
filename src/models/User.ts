@@ -553,19 +553,19 @@ export class User extends Model {
           inline_keyboard: [
             [
               {
-                text: '500 🌶 за 99 ⭐',
+                text: this.translate('buttons.buy_spice', {spice: 500, stars: 99}),
                 url: await this.createStarsInvoiceLink(500, 99),
               },
             ],
             [
               {
-                text: '1000 🌶 за 179 ⭐',
+                text: this.translate('buttons.buy_spice', {spice: 1000, stars: 179}),
                 url: await this.createStarsInvoiceLink(1000, 179),
               },
             ],
             [
               {
-                text: '2000 🌶 за 439 ⭐',
+                text: this.translate('buttons.buy_spice', {spice: 2000, stars: 439}),
                 url: await this.createStarsInvoiceLink(2000, 439),
               },
             ],

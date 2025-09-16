@@ -34,7 +34,8 @@
     "choose_another_character": "💁🏼‍♀️ Choose another character",
     "clear_history_restart": "🗑️ Clear all history and start over",
     "top_up_balance": "Top up balance",
-    "invite_friend": "Invite friend (+{{bonus}} 🌶)"
+    "invite_friend": "{{bonus}} 🌶 for inviting friend 👥",
+    "buy_spice": "{{spice}} 🌶 for {{stars}} ⭐"
   },
   "payment": {
     "invoice_description": "Balance top up: {{spiceAmount}} 🌶 for {{starsCost}} ⭐"
