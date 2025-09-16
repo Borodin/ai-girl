@@ -583,7 +583,7 @@ export class User extends Model {
     );
   }
 
-  async generateAIResponse(): Promise<void> {
+  async generateAIResponse(retryCount: number = 0): Promise<void> {
     const character = this.selected_character_id
       ? await Character.findByPk(this.selected_character_id)
       : null;
@@ -667,7 +667,13 @@ export class User extends Model {
       console.log(response);
     } catch (error) {
       console.error('AI Response Error:', error);
-      await this.generateAIResponse();
+
+      if (retryCount < 5) {
+        console.log(`Retrying generateAIResponse, attempt ${retryCount + 1}/5`);
+        await this.generateAIResponse(retryCount + 1);
+      } else {
+        console.error('Maximum retry attempts reached for generateAIResponse');
+      }
     }
   }
 }
