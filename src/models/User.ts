@@ -96,7 +96,7 @@ export class User extends Model {
   }
 
   get shareDeepLink(): string {
-    const inviteMsg = '💕 Пообщайся с AI девушкой и получи бонусы!\n';
+    const inviteMsg = this.translate('messages.invite_message');
     return `https://t.me/share/url?url=${encodeURIComponent(this.inviteLink)}&text=${encodeURIComponent(inviteMsg)}`;
   }
 

@@ -20,7 +20,8 @@
     "top_up_spice": "🌶 <b>Top up balance</b>\n\n<b>Pricing:</b>\nMessage: {{textCost}} 🌶\nPhoto: {{imageCost}} 🌶\nVideo: {{videoCost}} 🌶\n\n<b>Current balance:</b> {{balance}} 🌶\n\nSelect a package to top up:",
     "payment_successful": "<b>Balance topped up!</b>\nAdded: {{spiceAmount}} 🌶\nCurrent balance: {{balance}} 🌶",
     "inviter_reward": "<b>Friend accepted invitation!</b>\nYou received {{amount}} 🌶 for inviting {{inviteeName}}\nCurrent balance: {{balance}} 🌶",
-    "invitee_reward": "<b>Welcome!</b>\nYou received {{amount}} 🌶 for registering via {{inviterName}}'s invitation\nCurrent balance: {{balance}} 🌶"
+    "invitee_reward": "<b>Welcome!</b>\nYou received {{amount}} 🌶 for registering via {{inviterName}}'s invitation\nCurrent balance: {{balance}} 🌶",
+    "invite_message": "💕 Chat with AI girl!\n"
   },
   "status": {
     "language_set": "Language selected",
