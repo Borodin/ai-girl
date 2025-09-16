@@ -92,6 +92,9 @@ bot.on('message:text', (msg) =>
       await user.sendStats();
     } else if (msg.text === '/help') {
       // await user.sendMessage(i18n.t('messages.help', user.lang));
+    } else if (msg.text.startsWith('/')) {
+      await Message.deleteByTgMsg(msg);
+      await user.sendMessage(user.translate('errors.unknown_command', {command: msg.text}));
     } else {
       await user.generateAIResponse();
     }

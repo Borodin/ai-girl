@@ -38,5 +38,8 @@
   },
   "payment": {
     "invoice_description": "Balance top up: {{spiceAmount}} 🌶 for {{starsCost}} ⭐"
+  },
+  "errors": {
+    "unknown_command": "Unknown command: <code>{{command}}</code>"
   }
 }

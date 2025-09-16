@@ -38,5 +38,8 @@
   },
   "payment": {
     "invoice_description": "Пополнение баланса: {{spiceAmount}} 🌶 за {{starsCost}} ⭐"
+  },
+  "errors": {
+    "unknown_command": "Неизвестная команда: <code>{{command}}</code>"
   }
 }
