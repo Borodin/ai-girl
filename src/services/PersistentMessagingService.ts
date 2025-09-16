@@ -54,6 +54,7 @@ export class PersistentMessagingService {
         SELECT 1
         FROM messages m
         WHERE m.chat_id = u.id
+          AND m.character_id = u.selected_character_id
           AND m."deletedAt" IS NULL
         HAVING MAX(m.date) < :thresholdTime)
         AND (
@@ -62,6 +63,7 @@ export class PersistentMessagingService {
               FROM (SELECT ai_response
                     FROM messages m
                     WHERE m.chat_id = u.id
+                      AND m.character_id = u.selected_character_id
                       AND m."deletedAt" IS NULL
                     ORDER BY m.date DESC LIMIT :maxConsecutiveMessages) recent_messages
               WHERE ai_response IS NOT NULL -- сообщение от ассистента
