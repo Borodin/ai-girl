@@ -12,14 +12,15 @@ export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
     underscored: false,
     freezeTableName: true,
   },
-  dialectOptions: process.env.DATABASE_URL!.includes('ondigitalocean.com')
+  dialectOptions: process.env.DATABASE_CA_CERT
     ? {
         ssl: {
           require: true,
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
+          ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
         },
       }
-    : {},
+    : undefined,
 });
 
 export {User, Character, Message, SpiceTransaction};
