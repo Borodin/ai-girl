@@ -2,8 +2,8 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [main, master]
-    tags: ['v*']
+    branches: [ main, master ]
+    tags: [ 'v*' ]
 
 jobs:
   build-and-push:
@@ -31,9 +31,16 @@ jobs:
       - name: Trigger DigitalOcean deployment
         if: success()
         run: |
-          curl -X POST \
+          response=$(curl -X POST \
             -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{}' \
-            "https://api.digitalocean.com/v2/apps/5fdf484c-3859-4387-bc2e-533ae5059772/deployments"
+            -w "%{http_code}" \
+            -s \
+            "https://api.digitalocean.com/v2/apps/5fdf484c-3859-4387-bc2e-533ae5059772/deployments")
+
+          if [[ $response != *"200"* && $response != *"201"* ]]; then
+            echo "Deployment trigger failed with response: $response"
+            exit 1
+          fi
 
