@@ -593,7 +593,6 @@ export class User extends Model {
       return;
     }
 
-    // Check if user can afford AI response
     const canAffordResponse = await this.canAffordSpice(SPICE_CONFIG.TEXT_RESPONSE_COST);
     if (!canAffordResponse) {
       await this.sendInsufficientSpiceMessage();
@@ -618,87 +617,51 @@ export class User extends Model {
         return await generateResponse(messages);
       });
 
+      // Generate common reply markup
+      const replyMarkup =
+        response.reply_suggestions?.length > 0
+          ? {
+              keyboard: response.reply_suggestions.map((suggestion) => [{text: suggestion}]),
+              resize_keyboard: true,
+              one_time_keyboard: true,
+              is_persistent: true,
+            }
+          : undefined;
+
       // Try to generate image if photo_prompt exists
       const imageUrl = await generateCharacterImage(this, character, response);
+      const canAffordImage =
+        imageUrl && (await this.canAffordSpice(SPICE_CONFIG.IMAGE_GENERATION_COST));
 
-      if (imageUrl) {
-        // Check if user can afford image generation
-        const canAffordImage = await this.canAffordSpice(SPICE_CONFIG.IMAGE_GENERATION_COST);
-        if (!canAffordImage) {
-          // Send text message without image
-          await this.sendMessage(
-            response.answer,
-            {
-              reply_markup:
-                response.reply_suggestions?.length > 0
-                  ? {
-                      keyboard: response.reply_suggestions.map((suggestion) => [
-                        {text: suggestion},
-                      ]),
-                      resize_keyboard: true,
-                      one_time_keyboard: true,
-                      is_persistent: true,
-                    }
-                  : undefined,
-            },
-            true,
-            response
-          );
-
-          // Charge for text response
-          await this.chargeSpice(SPICE_CONFIG.TEXT_RESPONSE_COST, TransactionType.TEXT_RESPONSE);
-
-          // Notify about insufficient balance for image
-          await this.sendInsufficientSpiceMessage();
-        } else {
-          // Send photo with caption and charge for image generation
-          await this.sendPhoto(
-            imageUrl,
-            {
-              caption: response.answer,
-              reply_markup:
-                response.reply_suggestions?.length > 0
-                  ? {
-                      keyboard: response.reply_suggestions.map((suggestion) => [
-                        {text: suggestion},
-                      ]),
-                      resize_keyboard: true,
-                      one_time_keyboard: true,
-                      is_persistent: true,
-                    }
-                  : undefined,
-            },
-            true,
-            response
-          );
-
-          // Charge for image generation (includes text response)
-          await this.chargeSpice(
-            SPICE_CONFIG.IMAGE_GENERATION_COST,
-            TransactionType.IMAGE_GENERATION
-          );
-        }
-      } else {
-        // Send text message and charge for text response
-        await this.sendMessage(
-          response.answer,
+      if (imageUrl && canAffordImage) {
+        await this.sendPhoto(
+          imageUrl,
           {
-            reply_markup:
-              response.reply_suggestions?.length > 0
-                ? {
-                    keyboard: response.reply_suggestions.map((suggestion) => [{text: suggestion}]),
-                    resize_keyboard: true,
-                    one_time_keyboard: true,
-                    is_persistent: true,
-                  }
-                : undefined,
+            caption: response.answer,
+            reply_markup: replyMarkup,
           },
           true,
           response
         );
 
-        // Charge for text response
+        await this.chargeSpice(
+          SPICE_CONFIG.IMAGE_GENERATION_COST,
+          TransactionType.IMAGE_GENERATION
+        );
+      } else {
+        await this.sendMessage(
+          response.answer,
+          {
+            reply_markup: replyMarkup,
+          },
+          true,
+          response
+        );
+
         await this.chargeSpice(SPICE_CONFIG.TEXT_RESPONSE_COST, TransactionType.TEXT_RESPONSE);
+        if (imageUrl && !canAffordImage) {
+          await this.sendInsufficientSpiceMessage();
+        }
       }
 
       console.log(response);
