@@ -4,13 +4,20 @@ import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
 
-// Add SSL parameters to DATABASE_URL if not present
-const databaseUrl = process.env.DATABASE_URL!;
-const urlWithSSL = databaseUrl.includes('sslmode=')
-  ? databaseUrl
-  : `${databaseUrl}?sslmode=require`;
+// Configure SSL properly
+const isDigitalOceanDB = process.env.DATABASE_URL!.includes('ondigitalocean.com');
+const sslConfig =
+  isDigitalOceanDB && process.env.DATABASE_CA_CERT
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: true,
+          ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
+        },
+      }
+    : {};
 
-export const sequelize = new Sequelize(urlWithSSL, {
+export const sequelize = new Sequelize(process.env.DATABASE_URL!, {
   dialect: 'postgres',
   models: [User, Character, Message, SpiceTransaction],
   logging: false,
@@ -18,11 +25,7 @@ export const sequelize = new Sequelize(urlWithSSL, {
     underscored: false,
     freezeTableName: true,
   },
-  dialectOptions: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  },
+  dialectOptions: sslConfig,
 });
 
 export {User, Character, Message, SpiceTransaction};
