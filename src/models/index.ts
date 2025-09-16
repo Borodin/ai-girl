@@ -3,78 +3,33 @@ import {User} from './User.js';
 import {Character} from './Character.js';
 import {Message} from './Message.js';
 import {SpiceTransaction} from './SpiceTransaction.js';
-
-console.log('dbUrl');
+console.log('FIX #1');
 // Парсим DATABASE_URL
 const dbUrl = new URL(process.env.DATABASE_URL!);
-const isDigitalOceanDB = dbUrl.hostname.includes('ondigitalocean.com');
 
-interface DatabaseConfig {
-  dialect: 'postgres';
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  database: string;
-  models: (typeof User | typeof Character | typeof Message | typeof SpiceTransaction)[];
-  logging: boolean;
-  define: {
-    underscored: boolean;
-    freezeTableName: boolean;
-  };
-  dialectOptions?: {
-    ssl:
-      | {
-          require: boolean;
-          rejectUnauthorized: boolean;
-          ca: string;
-        }
-      | boolean;
-  };
-  pool?: {
-    max: number;
-    min: number;
-    acquire: number;
-    idle: number;
-  };
-}
-
-// Извлекаем параметры подключения
-const dbConfig: DatabaseConfig = {
-  dialect: 'postgres',
+const dbConfig = {
+  dialect: 'postgres' as const,
   host: dbUrl.hostname,
   port: parseInt(dbUrl.port),
   username: dbUrl.username,
   password: dbUrl.password,
-  database: dbUrl.pathname.slice(1), // Убираем начальный слеш
+  database: dbUrl.pathname.slice(1),
   models: [User, Character, Message, SpiceTransaction],
   logging: false,
   define: {
     underscored: false,
     freezeTableName: true,
   },
-};
-
-if (isDigitalOceanDB) {
-  // Для DigitalOcean используем специальную конфигурацию SSL
-  dbConfig.dialectOptions = {
+  dialectOptions: {
     ssl: process.env.DATABASE_CA_CERT
       ? {
           require: true,
-          rejectUnauthorized: false, // Критично для DigitalOcean
+          rejectUnauthorized: false,
           ca: Buffer.from(process.env.DATABASE_CA_CERT, 'base64').toString('utf-8'),
         }
-      : true, // Просто включаем SSL без проверки сертификата
-  };
-
-  // Добавляем pool настройки для стабильности
-  dbConfig.pool = {
-    max: 5,
-    min: 0,
-    acquire: 60000,
-    idle: 10000,
-  };
-}
+      : true,
+  },
+};
 
 export const sequelize = new Sequelize(dbConfig);
 
