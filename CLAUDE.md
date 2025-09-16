@@ -83,12 +83,10 @@ This is a TypeScript Telegram bot built with a **functional approach** rather th
 **Required Environment Variables**:
 ```env
 TELEGRAM_BOT_TOKEN=your_bot_token_here
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=ai_girlfriend
-DB_USER=postgres
-DB_PASSWORD=postgres
+DATABASE_URL=postgresql://user:password@host:port/database
 BOT_USERNAME=your_bot_username
+# For DigitalOcean managed PostgreSQL with SSL:
+DATABASE_CA_CERT=base64_encoded_ca_certificate
 ```
 
 ## Important Implementation Details
