@@ -22,14 +22,17 @@ export class PersistentMessagingService {
   }
 
   private async processInactiveUsers(): Promise<void> {
-    const inactiveUsers = await this.findInactiveUsers(
-      2 * 60 * 1000, // 2 минуты
-      2 // максимум 2 сообщение от ассистента подряд
-    );
+    const [inactiveUsers, veryInactiveUsers] = await Promise.all([
+      this.findInactiveUsers(2 * 60 * 1000, 2), // 2 минуты, макс 2 сообщения
+      this.findInactiveUsers(24 * 60 * 60 * 1000, 3), // сутки, макс 3 сообщения
+    ]);
 
-    console.log(`Найдено ${inactiveUsers.length} неактивных пользователей`);
+    const uniqueUsers = new Map();
+    [...inactiveUsers, ...veryInactiveUsers].forEach((user) => uniqueUsers.set(user.id, user));
 
-    for (const user of inactiveUsers) {
+    console.log(`Found ${uniqueUsers.size} inactive users`);
+
+    for (const user of uniqueUsers.values()) {
       await user.generateAIResponse();
     }
   }
