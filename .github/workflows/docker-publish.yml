@@ -28,3 +28,12 @@ jobs:
           docker build -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:latest
 
+      - name: Trigger DigitalOcean deployment
+        if: success()
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            "https://api.digitalocean.com/v2/apps/5fdf484c-3859-4387-bc2e-533ae5059772/deployments"
+
